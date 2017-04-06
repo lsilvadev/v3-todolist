@@ -128,6 +128,7 @@ myTodoList.controller('mainController', ['$scope', '$http', function($scope, $ht
                     console.log('Error: ' + err);
                 });
 
+
             $http.delete($scope.apiUrl + '/objects/' + item.id + '/locks/' + r.data._id, { headers: $scope.config.headers })
                 .success(function(result) {
                     console.log(result);
