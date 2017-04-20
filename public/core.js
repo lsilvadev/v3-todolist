@@ -183,7 +183,7 @@ myTodoList.controller('mainController', ['$scope', '$http', function($scope, $ht
                     //console.log(result);
                 })
                 .error(function(err) {
-                    console.log('Error: ' + err);
+                    console.log(err);
                 });
 
             $scope.showedit[item.id] = false;
