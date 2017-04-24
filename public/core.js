@@ -161,17 +161,8 @@ myTodoList.controller('mainController', ['$scope', '$http', function($scope, $ht
     $scope.alterTodo = function(item){
         $http.post($scope.apiUrl + '/objects/' + item.id + '/locks', {"lockType": "step"}, { headers: $scope.config.headers } )
         .success(function(r) {
-            var objectFormData = {
-                'processVersion': $scope.config.processVersion,
-                'processId': $scope.config.processId,
-                'stepId': $scope.config.stepId,
-                'fields': [
-                    { 'fieldId': 'b0d71bee-8fb1-46a2-be71-3bbb8f81ccd9', 'value': item.text },
-                    { 'fieldId': 'a8642860-2296-4a9d-94bf-2397ffefe733', 'value': item.dueDate }
-                ]
-            };
 
-            $http.put($scope.apiUrl + '/objects/' + item.id, objectFormData, { headers: $scope.config.headers } )
+            $http.put($scope.apiUrl + '/objects/' + item.id + '/fields/b0d71bee-8fb1-46a2-be71-3bbb8f81ccd9', {'value': item.text}, { headers: $scope.config.headers } )
                 .success(function(result) {
                     $http.delete($scope.apiUrl + '/objects/' + item.id + '/locks/' + r.data._id, { headers: $scope.config.headers })
                     .success(function(result) {
@@ -180,7 +171,6 @@ myTodoList.controller('mainController', ['$scope', '$http', function($scope, $ht
                     .error(function(err) {
                         console.log(err);
                     });
-                    //console.log(result);
                 })
                 .error(function(err) {
                     console.log(err);
