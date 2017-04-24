@@ -55,7 +55,7 @@ myTodoList.controller('mainController', ['$scope', '$http', function($scope, $ht
 
             $http.post($scope.apiUrl + '/objects/' + item._id + '/fields/' + fieldId + '/files', fd, { headers: $scope.config.headersFile })
             .success(function(result) {
-                $http.delete($scope.apiUrl + '/objects/' + item._id + '/locks/' + r.data._id, { headers: $scope.config.headers })
+                $http.delete($scope.apiUrl + '/objects/' + item._id + '/locks/' + res.data._id, { headers: $scope.config.headers })
                 .success(function(r) {
                     console.log(r);
                 })
@@ -86,7 +86,7 @@ myTodoList.controller('mainController', ['$scope', '$http', function($scope, $ht
     }
 
     // Página incial, obtemos e mostramos todas as tarefas
-    $http.get($scope.apiUrl + '/processes/' + $scope.config.processId + '/objects?limit=50', { headers: $scope.config.headers })
+    $http.get($scope.apiUrl + '/processes/' + $scope.config.processId + '/objects/?limit=50&fields=_id,protected(currentSteps(stepId)),fields(fieldId,value)', { headers: $scope.config.headers })
         .success(function (result) {
             $scope.todos = [];
 
