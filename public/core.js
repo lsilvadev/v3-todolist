@@ -21,6 +21,8 @@ myTodoList.controller('mainController', ['$scope', '$http', function($scope, $ht
     $scope.formData = {};
     $scope.showedit = {};
 
+    $scope.formData.date = new Date();
+
     $scope.formData.true = "a706e433-8fae-451c-8dc9-7ea61b894ada";
     $scope.formData.false = "81ac0f26-3a4d-42cd-843c-177aff5ff22f";
 
@@ -137,7 +139,8 @@ myTodoList.controller('mainController', ['$scope', '$http', function($scope, $ht
                     $scope.todos.push(transform(response.data));
                 }*/
                 $scope.formData.text = "";
-                $scope.formData.date = "";
+                $scope.formData.date = new Date();
+                angular.element("input[type='file']").val(null);
             })
             .error(function (error) {
                 console.log('Error: ' + error);
