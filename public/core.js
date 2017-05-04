@@ -22,9 +22,11 @@ myTodoList.controller('mainController', ['$scope', '$http', function($scope, $ht
     $scope.showedit = {};
 
     $scope.formData.date = new Date();
-
+    
     $scope.formData.true = "a706e433-8fae-451c-8dc9-7ea61b894ada";
     $scope.formData.false = "81ac0f26-3a4d-42cd-843c-177aff5ff22f";
+
+    $scope.formData.pageNumber = 1;
 
     // V3 API
     $scope.apiUrl = 'http://api.acesso.io/v1'
@@ -44,6 +46,8 @@ myTodoList.controller('mainController', ['$scope', '$http', function($scope, $ht
         processId: 'ac3b750d-e682-4fac-aed7-674814097dfb', // Obter ID após criar o processo pelo script "create_process.http"
         stepId: '81ac0f26-3a4d-42cd-843c-177aff5ff22f'
     }
+
+    getTask(1);
 
     function uploadFile(item)
     {    
@@ -104,20 +108,30 @@ myTodoList.controller('mainController', ['$scope', '$http', function($scope, $ht
             'file': fields['eb9552b5-b435-4b60-a3a2-b7790567ea46']
         };
     }
+     
+    $scope.getTodo = function (page) {        
+        getTask(page);
+    }
 
     // Página incial, obtemos e mostramos todas as tarefas
-    $http.get($scope.apiUrl + '/processes/' + $scope.config.processId + '/objects/?limit=50&fields=_id,protected(currentSteps(stepId)),fields(fieldId,value)', { headers: $scope.config.headers })
-        .success(function (response) {
-            $scope.todos = [];
+    function getTask(page)
+    {    
+        var offset = 5*(page-1);
 
+        $http.get($scope.apiUrl + '/processes/' + $scope.config.processId + '/objects/?limit=5&offset='+offset+'&fields=_id,protected(currentSteps(stepId)),fields(fieldId,value)', { headers: $scope.config.headers })
+        .success(function (response) {
             if (response.success && response.data.size > 0) {
+                $scope.formData.pageNumber = page;
+                $scope.todos = [];
+
                 response.data.items.forEach(function (item, key) {
                     $scope.todos.push(transform(item));
                 })
-            }
+            }            
         }).error(function (error) {
             console.log('Error: ' + error);
         });
+    };    
 
     // Cria uma nova tarefa, enviando o texto para a V3 API
     $scope.createTodo = function() {
@@ -140,7 +154,8 @@ myTodoList.controller('mainController', ['$scope', '$http', function($scope, $ht
                 }*/
                 $scope.formData.text = "";
                 $scope.formData.date = new Date();
-                angular.element("input[type='file']").val(null);
+                $scope.formData.file = undefined;
+                angular.element("input[type='file']").val('');
             })
             .error(function (error) {
                 console.log('Error: ' + error);

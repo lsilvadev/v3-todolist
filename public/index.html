@@ -59,6 +59,9 @@
                         </tr>
                     </tbody>
                 </table>
+                <button type="submit" class="btn glyphicon glyphicon-chevron-left" ng-click="getTodo(formData.pageNumber-1)"></button>
+                {{ formData.pageNumber }}                
+                <button type="submit" class="btn glyphicon glyphicon-chevron-right" ng-click="getTodo(formData.pageNumber+1)"></button>
             </div>
         </div>
 
