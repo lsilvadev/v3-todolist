@@ -26,7 +26,7 @@ myTodoList.controller('mainController', ['$scope', '$http', function($scope, $ht
     $scope.formData.true = "a706e433-8fae-451c-8dc9-7ea61b894ada";
     $scope.formData.false = "81ac0f26-3a4d-42cd-843c-177aff5ff22f";
 
-    $scope.formData.pageNumber = 1;
+    $scope.formData.page = 1;
 
     // V3 API
     $scope.apiUrl = 'http://api.acesso.io/v1'
@@ -52,12 +52,13 @@ myTodoList.controller('mainController', ['$scope', '$http', function($scope, $ht
     function uploadFile(item)
     {    
         var file = $scope.formData.file;
+        var page = $scope.formData.page;
         var fd = new FormData();
         fd.append("file", file);
 
         if (file==undefined)
         {
-            $scope.todos.push(transform(item));
+            getTask(page);
             return;
         }
 
@@ -72,12 +73,14 @@ myTodoList.controller('mainController', ['$scope', '$http', function($scope, $ht
                 $http.delete($scope.apiUrl + '/objects/' + item._id + '/locks/' + responsePostLock.data._id, { headers: $scope.config.headers })
                 .success(function(responseDeleteLock) {
 
-                    $http.get($scope.apiUrl + '/objects/' + item._id + '/?fields=_id,protected(currentSteps(stepId)),fields(fieldId,value)', { headers: $scope.config.headers })
+                    getTask(page);
+
+                    /*$http.get($scope.apiUrl + '/objects/' + item._id + '/?fields=_id,protected(currentSteps(stepId)),fields(fieldId,value)', { headers: $scope.config.headers })
                     .success(function (responseGetObject) {
                         $scope.todos.push(transform(responseGetObject.data));
                     }).error(function (errorGetObject) {
                         console.log('Error: ' + errorGetObject);
-                    });
+                    });*/
                 })
                 .error(function(errorDeleteLock) {
                     console.log(errorDeleteLock);
@@ -121,7 +124,7 @@ myTodoList.controller('mainController', ['$scope', '$http', function($scope, $ht
         $http.get($scope.apiUrl + '/processes/' + $scope.config.processId + '/objects/?limit=5&offset='+offset+'&fields=_id,protected(currentSteps(stepId)),fields(fieldId,value)', { headers: $scope.config.headers })
         .success(function (response) {
             if (response.success && response.data.size > 0) {
-                $scope.formData.pageNumber = page;
+                $scope.formData.page = page;
                 $scope.todos = [];
 
                 response.data.items.forEach(function (item, key) {
@@ -152,9 +155,10 @@ myTodoList.controller('mainController', ['$scope', '$http', function($scope, $ht
                 /*if (response.success) {
                     $scope.todos.push(transform(response.data));
                 }*/
-                $scope.formData.text = "";
+                $scope.formData.text = "";                
                 $scope.formData.date = new Date();
                 $scope.formData.file = undefined;
+                $scope.frm.$setPristine();
                 angular.element("input[type='file']").val('');
             })
             .error(function (error) {
